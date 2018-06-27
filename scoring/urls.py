@@ -14,8 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
+
+from scoring.views import (
+	GameListCreateAPIView,
+	GameRetrieveAPIView,
+	RollCreateAPIView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('games/', GameListCreateAPIView.as_view()),
+    re_path(r'games/(?P<pk>\d+)/$', GameRetrieveAPIView.as_view()),
+    re_path(r'games/(?P<game_id>\d+)/roll/$', RollCreateAPIView.as_view())
 ]

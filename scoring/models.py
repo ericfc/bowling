@@ -58,19 +58,20 @@ class Frame(models.Model):
         """
         Calculate the score on an OPEN Frame
         """
-        return sum([roll.pins_knocked_down for roll in self.rolls.all()])
+        score = self.rolls.all().aggregate(
+            score=models.Sum('pins_knocked_down')
+        )
+        return score.get('score', 0)
 
     def _calculate_spare_score(self):
         """
         Calculate the score on a SPARE Frame by finding the next Roll
         If there is no next roll return None
         """
-        next_frame = Frame.objects.get(
-            player=self.player,
-            frame_number=self.frame_number + 1
-        )
-
-        third_roll = next_frame.rolls.order_by('roll_number').first()
+        third_roll = Roll.objects.filter(
+            frame__player=self.player,
+            frame__frame_number=self.frame_number + 1,
+        ).order_by('roll_number').first()
 
         if third_roll is not None:
             return 10 + third_roll.pins_knocked_down

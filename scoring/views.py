@@ -14,8 +14,8 @@ from scoring.serializers import (
 class GameListCreateAPIView(generics.ListCreateAPIView):
     queryset = Game.objects.all()
 
-    def post(self, request):
-        serializer = self.get_serializer_class()(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         game = serializer.save()
 
@@ -39,7 +39,7 @@ class RollCreateAPIView(generics.CreateAPIView):
     serializer_class = CreateRollSerializer
 
     def post(self, request, game_id):
-        serializer = self.get_serializer_class()(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
